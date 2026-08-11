@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { Plus, Search, Edit2, Trash2, X, Image as ImageIcon, Coffee, Utensils, Package } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, X, Image as ImageIcon, Coffee, Utensils, Package, Upload } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
 
 export default function ProductsView() {
@@ -261,25 +261,58 @@ export default function ProductsView() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-secondary uppercase block mb-1">URL Gambar Produk</label>
-                <div className="flex gap-3 items-center">
-                  <input 
-                    type="url" 
-                    placeholder="https://example.com/gambar-kopi.jpg"
-                    value={image}
-                    onChange={(e) => setImage(e.target.value)}
-                    className="flex-1 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:border-accent"
-                  />
-                  {image && (
-                    <img 
-                      src={image} 
-                      alt="Preview" 
-                      className="w-10 h-10 rounded-md object-cover border border-border shrink-0"
-                      onError={(e) => { e.target.style.display = 'none'; }}
-                    />
+                <label className="text-xs font-bold text-secondary uppercase block mb-1">Gambar Produk</label>
+                <div className="p-3 border border-dashed border-border rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors flex items-center gap-4">
+                  {image ? (
+                    <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-border shrink-0 bg-white group">
+                      <img 
+                        src={image} 
+                        alt="Preview" 
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setImage('')}
+                        className="absolute inset-0 bg-slate-900/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Hapus Gambar"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 rounded-lg bg-slate-100 border border-border flex flex-col items-center justify-center text-slate-400 shrink-0">
+                      <Upload className="w-6 h-6 text-slate-400" />
+                    </div>
                   )}
+
+                  <div className="flex-1 min-w-0">
+                    <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-colors shadow-xs">
+                      <Upload className="w-3.5 h-3.5" />
+                      {image ? 'Ganti File Gambar' : 'Upload File Gambar'}
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files && e.target.files[0];
+                          if (file) {
+                            if (file.size > 5 * 1024 * 1024) {
+                              toast.error("Ukuran file gambar maksimal 5MB!");
+                              return;
+                            }
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              setImage(event.target.result);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
+                    <p className="text-[11px] text-secondary mt-1">Pilih file gambar (JPG, PNG, WEBP). Gambar disimpan langsung di database.</p>
+                  </div>
                 </div>
-                <p className="text-[11px] text-secondary mt-1">Masukkan URL gambar produk dari internet atau cloud storage.</p>
               </div>
 
               <div>
