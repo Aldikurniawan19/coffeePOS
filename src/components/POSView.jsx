@@ -335,10 +335,10 @@ export default function POSView({ onTransactionComplete }) {
                   </div>
                 </div>
 
-                {/* Dark Gradient Overlay (Reference Image Style) */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-85 group-hover:opacity-95 transition-opacity duration-300 pointer-events-none" />
+                {/* Bottom Half Transparent Dark Gradient Overlay (Agak Solid di Bawah, Pudar ke Atas, Batas di Tengah Card) */}
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-950/95 via-slate-950/60 to-transparent pointer-events-none transition-opacity duration-300 group-hover:opacity-100" />
 
-                {/* Top Right Glassmorphism Add Button (Reference Image Position) */}
+                {/* Top Right Liquid Glass Add Button */}
                 <div className="relative z-10 p-3 flex justify-end">
                   <button
                     type="button"
@@ -346,24 +346,26 @@ export default function POSView({ onTransactionComplete }) {
                       e.stopPropagation();
                       addToCart(product);
                     }}
-                    className="w-9 h-9 rounded-full bg-white/25 backdrop-blur-md border border-white/40 text-white shadow-lg hover:bg-blue-600 hover:border-blue-500 hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center group-hover:bg-blue-600"
+                    className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-xl border border-white/50 text-white shadow-[0_8px_25px_rgba(0,0,0,0.3)] hover:bg-blue-600 hover:border-blue-300 hover:shadow-[0_0_20px_rgba(37,99,235,0.6)] hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center relative overflow-hidden group/btn"
                     title="Tambah ke Keranjang"
                   >
-                    <Plus className="w-5 h-5 text-white shrink-0" strokeWidth={2.5} />
+                    {/* Liquid Glass Glossy Highlight */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-white/10 to-transparent rounded-full pointer-events-none group-hover/btn:opacity-40 transition-opacity" />
+                    <Plus className="w-5 h-5 text-white shrink-0 relative z-10 drop-shadow-sm" strokeWidth={2.8} />
                   </button>
                 </div>
 
                 {/* Bottom Overlay Content Area */}
-                <div className="relative z-10 p-4 flex flex-col justify-end">
+                <div className="relative z-10 p-4 sm:p-5 flex flex-col justify-end">
                   {/* Category Tag with dashes "- CATEGORY -" */}
-                  <div className="flex items-center gap-1 text-[11px] font-bold text-blue-300/90 uppercase tracking-widest mb-1">
-                    <span className="w-2 h-[2px] bg-blue-400 rounded-full inline-block"></span>
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-blue-300 uppercase tracking-widest mb-1 drop-shadow-sm">
+                    <span className="w-2.5 h-[2px] bg-blue-400 rounded-full inline-block"></span>
                     <span>{product.category?.name || product.type || 'MENU'}</span>
-                    <span className="w-2 h-[2px] bg-blue-400 rounded-full inline-block"></span>
+                    <span className="w-2.5 h-[2px] bg-blue-400 rounded-full inline-block"></span>
                   </div>
 
                   {/* Main Title (Prominent Bold White Text) */}
-                  <h3 className="text-base sm:text-lg font-extrabold text-white tracking-tight leading-snug drop-shadow-md line-clamp-2 mb-1 group-hover:text-blue-200 transition-colors">
+                  <h3 className="text-base sm:text-lg font-extrabold text-white tracking-tight leading-snug drop-shadow-md line-clamp-2 mb-1.5 group-hover:text-blue-200 transition-colors">
                     {product.name}
                   </h3>
 
@@ -421,7 +423,7 @@ export default function POSView({ onTransactionComplete }) {
           </div>
         </div>
 
-        {/* Order Details & Staff Selection */}
+        {/* Order Details */}
         <div className="p-4 border-b border-border shrink-0 space-y-3 bg-slate-50/50">
           {/* Order Type Selector */}
           <div className="grid grid-cols-2 gap-2">
@@ -445,52 +447,28 @@ export default function POSView({ onTransactionComplete }) {
             </button>
           </div>
 
+          {/* Table Number & Customer Name Inputs (No Staff Selector) */}
           <div className="grid grid-cols-2 gap-3">
-            {/* Staff / Barista */}
             <div>
-              <label className="text-[11px] font-bold text-secondary uppercase mb-1 block">Staff / Barista</label>
-              <select
-                value={selectedBarber ? selectedBarber.id : ''}
-                onChange={(e) => {
-                  const b = barbers.find(item => item.id === Number(e.target.value));
-                  setSelectedBarber(b || null);
-                }}
-                className="w-full px-2.5 py-1.5 bg-white border border-border rounded-lg text-xs font-medium text-text focus:outline-none focus:border-accent"
-              >
-                <option value="">-- Pilih Staff --</option>
-                {barbers.map(b => (
-                  <option key={b.id} value={b.id}>
-                    {b.name}
-                  </option>
-                ))}
-              </select>
+              <label className="text-[11px] font-bold text-secondary uppercase mb-1 block">Nomor Meja</label>
+              <input 
+                type="text" 
+                value={tableNumber}
+                onChange={(e) => setTableNumber(e.target.value)}
+                placeholder="Misal: Meja 04"
+                disabled={orderType === 'Takeaway'}
+                className="w-full px-2.5 py-1.5 bg-white border border-border rounded-lg text-xs text-text focus:outline-none focus:border-accent disabled:bg-slate-100 disabled:text-slate-400"
+              />
             </div>
-
-            {/* Table Number (if Dine-in) or Customer Name */}
             <div>
-              {orderType === 'Dine-in' ? (
-                <>
-                  <label className="text-[11px] font-bold text-secondary uppercase mb-1 block">Nomor Meja</label>
-                  <input 
-                    type="text" 
-                    value={tableNumber}
-                    onChange={(e) => setTableNumber(e.target.value)}
-                    placeholder="Misal: Meja 04"
-                    className="w-full px-2.5 py-1.5 bg-white border border-border rounded-lg text-xs text-text focus:outline-none focus:border-accent"
-                  />
-                </>
-              ) : (
-                <>
-                  <label className="text-[11px] font-bold text-secondary uppercase mb-1 block">Nama Pemesan</label>
-                  <input 
-                    type="text" 
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    placeholder="Pelanggan Takeaway"
-                    className="w-full px-2.5 py-1.5 bg-white border border-border rounded-lg text-xs text-text focus:outline-none focus:border-accent"
-                  />
-                </>
-              )}
+              <label className="text-[11px] font-bold text-secondary uppercase mb-1 block">Nama Pemesan</label>
+              <input 
+                type="text" 
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="Pelanggan (Opsional)"
+                className="w-full px-2.5 py-1.5 bg-white border border-border rounded-lg text-xs text-text focus:outline-none focus:border-accent"
+              />
             </div>
           </div>
         </div>

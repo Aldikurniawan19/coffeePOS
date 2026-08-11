@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Coffee, Eye, EyeOff, LogIn, AlertCircle, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, LogIn, AlertCircle, Loader2 } from 'lucide-react';
+import BrandLogo from './BrandLogo';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -57,14 +58,9 @@ export default function LoginPage() {
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-[420px] mx-4">
         {/* Brand Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl shadow-lg shadow-blue-500/30 mb-4 transform hover:scale-105 transition-transform duration-300">
-            <Coffee className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-1">
-            CoffeePOS
-          </h1>
-          <p className="text-slate-500 text-sm">
+        <div className="flex flex-col items-center justify-center text-center mb-8">
+          <BrandLogo size="lg" className="mb-2" />
+          <p className="text-slate-500 text-sm mt-1">
             Sistem Kasir & POS Coffee Shop Modern
           </p>
         </div>

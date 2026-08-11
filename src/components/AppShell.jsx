@@ -18,6 +18,8 @@ import {
   X
 } from 'lucide-react';
 
+import BrandLogo from './BrandLogo';
+
 import DashboardView from './DashboardView';
 import POSView from './POSView';
 import ProductsView from './ProductsView';
@@ -157,20 +159,8 @@ export default function AppShell({ user }) {
           : '-translate-x-full lg:translate-x-0 lg:w-0 lg:opacity-0 lg:overflow-hidden lg:border-r-0'
       }`}>
         {/* Brand Header */}
-        <div className="h-[72px] flex items-center justify-between px-6 border-b border-border min-w-[260px]">
-          <div className="flex items-center gap-3 text-slate-900 font-bold text-xl tracking-tight">
-            <div className="w-9 h-9 bg-blue-600 text-white rounded-lg flex items-center justify-center shadow-md shadow-blue-500/20">
-              <Coffee className="w-5 h-5" />
-            </div>
-            CoffeePOS
-          </div>
-          <button 
-            onClick={() => setIsSidebarOpen(false)}
-            className="p-1.5 text-secondary hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors"
-            title="Sembunyikan Sidebar"
-          >
-            <X className="w-5 h-5" />
-          </button>
+        <div className="h-[72px] flex items-center px-6 border-b border-border min-w-[260px]">
+          <BrandLogo size="md" />
         </div>
 
         {/* Navigation Links */}
