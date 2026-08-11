@@ -86,17 +86,20 @@ export default function ReportsView() {
   const {
     transactions = [],
     barberSummary = [],
+    staffSummary = [],
     totalRevenue = 0,
     totalCommission = 0,
-    shopInfo = { shopName: 'Gentleman Barber', address: 'Jl. Sudirman No. 123, Jakarta' }
+    shopInfo = { shopName: 'Coffee POS', address: 'Jl. Kopi No. 123, Jakarta' }
   } = data || {};
+
+  const activeStaffSummary = staffSummary.length > 0 ? staffSummary : barberSummary;
 
   // Pagination Slice
   const totalSalesPages = Math.ceil(transactions.length / ITEMS_PER_PAGE);
   const currentSalesData = transactions.slice((salesPage - 1) * ITEMS_PER_PAGE, salesPage * ITEMS_PER_PAGE);
 
-  const totalCommPages = Math.ceil(barberSummary.length / ITEMS_PER_PAGE);
-  const currentCommData = barberSummary.slice((commPage - 1) * ITEMS_PER_PAGE, commPage * ITEMS_PER_PAGE);
+  const totalCommPages = Math.ceil(activeStaffSummary.length / ITEMS_PER_PAGE);
+  const currentCommData = activeStaffSummary.slice((commPage - 1) * ITEMS_PER_PAGE, commPage * ITEMS_PER_PAGE);
 
   // Formatted Label for Reports / Filenames
   const getDateLabel = () => {
@@ -113,18 +116,18 @@ export default function ReportsView() {
   const handleExportExcel = () => {
     exportToExcel({
       transactions,
-      barberSummary,
+      staffSummary: activeStaffSummary,
       totalRevenue,
       totalCommission,
       dateLabel: getDateLabel(),
-      shopName: shopInfo.shopName || 'Gentleman Barber'
+      shopName: shopInfo.shopName || 'Coffee POS'
     });
   };
 
   const handleExportPDF = () => {
     exportToPDF({
       transactions,
-      barberSummary,
+      staffSummary: activeStaffSummary,
       totalRevenue,
       totalCommission,
       dateLabel: getDateLabel(),
@@ -142,7 +145,7 @@ export default function ReportsView() {
             Laporan & Analisa
           </h2>
           <p className="text-sm text-secondary mt-1">
-            Laporan riwayat transaksi, grafik pendapatan & rincian komisi kapster.
+            Laporan riwayat transaksi, grafik pendapatan & rincian komisi staff/barista.
           </p>
         </div>
 
@@ -253,7 +256,7 @@ export default function ReportsView() {
               : 'text-secondary border-transparent hover:text-text'
           }`}
         >
-          Bagi Hasil Kapster
+          Komisi & Bagi Hasil Staff
         </button>
       </div>
 
@@ -279,7 +282,7 @@ export default function ReportsView() {
                   <th className="p-4">Kode TRX</th>
                   <th className="p-4">Waktu</th>
                   <th className="p-4">Pelanggan</th>
-                  <th className="p-4">Kapster</th>
+                  <th className="p-4">Staff / Barista</th>
                   <th className="p-4">Metode</th>
                   <th className="p-4 text-right">Total Transaksi</th>
                 </tr>
@@ -368,11 +371,11 @@ export default function ReportsView() {
             <table className="w-full text-left text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50 border-b border-border text-[11px] font-bold text-secondary uppercase">
-                  <th className="p-4">Nama Barber</th>
+                  <th className="p-4">Nama Staff</th>
                   <th className="p-4">Kode</th>
                   <th className="p-4">Skema Komisi</th>
                   <th className="p-4">Total Omset Dihasilkan</th>
-                  <th className="p-4 text-right">Hak Komisi Barber</th>
+                  <th className="p-4 text-right">Hak Komisi Staff</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -381,7 +384,7 @@ export default function ReportsView() {
                     <td className="p-4 font-semibold text-text">{b.name}</td>
                     <td className="p-4 font-mono text-secondary">{b.code}</td>
                     <td className="p-4 text-xs text-secondary">
-                      Cukur: {b.commissionCut}% | Produk: {b.commissionProduct}%
+                      Jasa: {b.commissionCut}% | Produk: {b.commissionProduct}%
                     </td>
                     <td className="p-4 font-medium text-text">Rp {b.totalSales.toLocaleString('id-ID')}</td>
                     <td className="p-4 text-right font-bold text-emerald-600 text-base">
@@ -389,10 +392,10 @@ export default function ReportsView() {
                     </td>
                   </tr>
                 ))}
-                {barberSummary.length === 0 && (
+                {activeStaffSummary.length === 0 && (
                   <tr>
                     <td colSpan="5" className="p-8 text-center text-secondary">
-                      Tidak ada data komisi kapster pada rentang tanggal ini.
+                      Tidak ada data komisi staff pada rentang tanggal ini.
                     </td>
                   </tr>
                 )}
@@ -400,11 +403,11 @@ export default function ReportsView() {
             </table>
           </div>
 
-          {/* Pagination Controls for Barber Commission */}
-          {barberSummary.length > ITEMS_PER_PAGE && (
+          {/* Pagination Controls for Staff Commission */}
+          {activeStaffSummary.length > ITEMS_PER_PAGE && (
             <div className="p-4 bg-slate-50 border border-border rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-secondary font-medium">
               <div>
-                Menampilkan <span className="font-bold text-text">{(commPage - 1) * ITEMS_PER_PAGE + 1}</span> - <span className="font-bold text-text">{Math.min(commPage * ITEMS_PER_PAGE, barberSummary.length)}</span> dari <span className="font-bold text-text">{barberSummary.length}</span> barber
+                Menampilkan <span className="font-bold text-text">{(commPage - 1) * ITEMS_PER_PAGE + 1}</span> - <span className="font-bold text-text">{Math.min(commPage * ITEMS_PER_PAGE, activeStaffSummary.length)}</span> dari <span className="font-bold text-text">{activeStaffSummary.length}</span> staff
               </div>
               <div className="flex items-center gap-1">
                 <button

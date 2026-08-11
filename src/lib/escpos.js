@@ -125,8 +125,8 @@ export function generateReceiptEscPos(receipt, shopInfo = {}, paperWidth = '58mm
   const width = paperWidth === '80mm' ? 48 : 32;
   const encoder = new EscPosEncoder();
 
-  const shopName = shopInfo.shopName || 'GENTLEMAN BARBER';
-  const address = shopInfo.address || 'Jl. Barberpos No. 1';
+  const shopName = shopInfo.shopName || 'COFFEE POS';
+  const address = shopInfo.address || 'Jl. Kopi No. 1';
 
   encoder.init();
 
@@ -148,7 +148,7 @@ export function generateReceiptEscPos(receipt, shopInfo = {}, paperWidth = '58mm
   
   const dateStr = receipt.createdAt ? new Date(receipt.createdAt).toLocaleString('id-ID') : new Date().toLocaleString('id-ID');
   encoder.addTwoColumns('Tanggal:', dateStr, width);
-  encoder.addTwoColumns('Kasir/Barber:', receipt.barberName || '-', width);
+  encoder.addTwoColumns('Kasir/Staff:', receipt.staffName || receipt.barberName || '-', width);
   encoder.addTwoColumns('Pelanggan:', receipt.customerName || 'Walk-in', width);
   encoder.addTwoColumns('Metode:', receipt.paymentMethod || 'Tunai', width);
 
@@ -201,7 +201,7 @@ export function generateReceiptEscPos(receipt, shopInfo = {}, paperWidth = '58mm
 export function generateTestReceiptEscPos(shopInfo = {}, paperWidth = '58mm') {
   const width = paperWidth === '80mm' ? 48 : 32;
   const encoder = new EscPosEncoder();
-  const shopName = shopInfo.shopName || 'GENTLEMAN BARBER';
+  const shopName = shopInfo.shopName || 'COFFEE POS';
 
   encoder.init();
   encoder.align('center');
@@ -217,7 +217,7 @@ export function generateTestReceiptEscPos(shopInfo = {}, paperWidth = '58mm') {
   encoder.addDivider(width, '-');
   encoder.align('center');
   encoder.addLine('Printer Siap Digunakan');
-  encoder.addLine('Pencetakan Struk Barberpos OK!');
+  encoder.addLine('Pencetakan Struk CoffeePOS OK!');
   encoder.addLine('');
   encoder.cut();
 

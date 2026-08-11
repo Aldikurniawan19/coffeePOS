@@ -27,12 +27,11 @@ import PrinterModal from './PrinterModal';
 export default function POSView({ onTransactionComplete }) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [barbers, setBarbers] = useState([]);
+  const [staffList, setStaffList] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [searchQuery, setSearchQuery] = useState('');
   
   const [cart, setCart] = useState([]);
-  const [selectedBarber, setSelectedBarber] = useState(null);
   const [customerName, setCustomerName] = useState('Walk-in (Pelanggan)');
   const [orderType, setOrderType] = useState('Dine-in');
   const [tableNumber, setTableNumber] = useState('');
@@ -49,7 +48,7 @@ export default function POSView({ onTransactionComplete }) {
   const [printerStatus, setPrinterStatus] = useState(printerService.getStatus());
   const [isPrinterModalOpen, setIsPrinterModalOpen] = useState(false);
   const [isPrintingThermal, setIsPrintingThermal] = useState(false);
-  const [shopInfo, setShopInfo] = useState({ shopName: 'KOPI POS', address: '' });
+  const [shopInfo, setShopInfo] = useState({ shopName: 'Coffee POS', address: '' });
 
   useEffect(() => {
     fetchData();
@@ -72,14 +71,14 @@ export default function POSView({ onTransactionComplete }) {
 
   const fetchData = async () => {
     try {
-      const [resProd, resCat, resBarb] = await Promise.all([
+      const [resProd, resCat, resStaff] = await Promise.all([
         fetch('/api/products').then(r => r.json()),
         fetch('/api/categories').then(r => r.json()),
-        fetch('/api/barbers').then(r => r.json())
+        fetch('/api/staff').then(r => r.json())
       ]);
       setProducts(Array.isArray(resProd) ? resProd : []);
       setCategories(Array.isArray(resCat) ? resCat : []);
-      setBarbers(Array.isArray(resBarb) ? resBarb : []);
+      setStaffList(Array.isArray(resStaff) ? resStaff : []);
     } catch (e) {
       console.error("Failed to load POS data:", e);
     }
@@ -160,8 +159,7 @@ export default function POSView({ onTransactionComplete }) {
         body: JSON.stringify({
           items: cart,
           paymentMethod,
-          staffId: selectedBarber ? selectedBarber.id : null,
-          barberId: selectedBarber ? selectedBarber.id : null,
+          staffId: null,
           customerName,
           orderType,
           tableNumber: orderType === 'Dine-in' ? tableNumber : null,
@@ -177,7 +175,7 @@ export default function POSView({ onTransactionComplete }) {
         const rawCashNum = Number(String(cashAmount).replace(/\D/g, '')) || 0;
         const fullReceipt = {
           ...data.transaction,
-          barberName: data.transaction.staffName || data.transaction.barberName,
+          staffName: data.transaction.staffName || '-',
           cashAmount: paymentMethod === 'Tunai' ? rawCashNum : null,
         };
 
@@ -335,10 +333,10 @@ export default function POSView({ onTransactionComplete }) {
                   </div>
                 </div>
 
-                {/* Bottom Half Transparent Dark Gradient Overlay (Agak Solid di Bawah, Pudar ke Atas, Batas di Tengah Card) */}
-                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-950/95 via-slate-950/60 to-transparent pointer-events-none transition-opacity duration-300 group-hover:opacity-100" />
+                {/* Subtle Black Tint Overlay (Di Depan Gambar & Di Belakang Teks) */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20 pointer-events-none transition-opacity duration-300 group-hover:opacity-95" />
 
-                {/* Top Right Liquid Glass Add Button */}
+                {/* Top Right High-Contrast Add Button */}
                 <div className="relative z-10 p-3 flex justify-end">
                   <button
                     type="button"
@@ -346,12 +344,12 @@ export default function POSView({ onTransactionComplete }) {
                       e.stopPropagation();
                       addToCart(product);
                     }}
-                    className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-xl border border-white/50 text-white shadow-[0_8px_25px_rgba(0,0,0,0.3)] hover:bg-blue-600 hover:border-blue-300 hover:shadow-[0_0_20px_rgba(37,99,235,0.6)] hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center relative overflow-hidden group/btn"
+                    className="w-10 h-10 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/30 text-white shadow-lg hover:bg-blue-600 hover:border-blue-400 hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center relative overflow-hidden group/btn"
                     title="Tambah ke Keranjang"
                   >
-                    {/* Liquid Glass Glossy Highlight */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-white/10 to-transparent rounded-full pointer-events-none group-hover/btn:opacity-40 transition-opacity" />
-                    <Plus className="w-5 h-5 text-white shrink-0 relative z-10 drop-shadow-sm" strokeWidth={2.8} />
+                    {/* Glossy Specular Highlight */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent rounded-full pointer-events-none" />
+                    <Plus className="w-5 h-5 text-white shrink-0 relative z-10 drop-shadow-md" strokeWidth={2.8} />
                   </button>
                 </div>
 
@@ -674,7 +672,7 @@ export default function POSView({ onTransactionComplete }) {
               )}
               <p className="text-secondary text-center mb-3">============================</p>
               <p><span className="text-secondary">Tanggal:</span> {new Date(receiptData.createdAt).toLocaleString('id-ID')}</p>
-              <p><span className="text-secondary">Staff/Barista:</span> {receiptData.staffName || receiptData.barberName || '-'}</p>
+              <p><span className="text-secondary">Staff/Barista:</span> {receiptData.staffName || '-'}</p>
               <p><span className="text-secondary">Tipe Order:</span> {receiptData.orderType || 'Dine-in'} {receiptData.tableNumber ? `(${receiptData.tableNumber})` : ''}</p>
               <p><span className="text-secondary">Pelanggan:</span> {receiptData.customerName}</p>
               <p><span className="text-secondary">Metode:</span> {receiptData.paymentMethod}</p>

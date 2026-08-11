@@ -7,8 +7,8 @@ export const GET: APIRoute = async () => {
     if (!setting) {
       setting = await prisma.setting.create({
         data: {
-          shopName: 'Gentleman Barber',
-          address: 'Jl. Sudirman No. 123, Jakarta',
+          shopName: 'Coffee POS',
+          address: 'Jl. Kopi No. 123, Jakarta',
         },
       });
     }

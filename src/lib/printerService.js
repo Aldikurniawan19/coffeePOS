@@ -41,22 +41,22 @@ class PrinterService {
   // Load preferences from localStorage
   initFromStorage() {
     if (typeof window === 'undefined') return;
-    const storedAutoPrint = localStorage.getItem('barberpos_auto_print');
+    const storedAutoPrint = localStorage.getItem('coffeepos_auto_print') || localStorage.getItem('barberpos_auto_print');
     if (storedAutoPrint !== null) {
       this.autoPrintEnabled = storedAutoPrint === 'true';
     }
 
-    const storedPaperWidth = localStorage.getItem('barberpos_paper_width');
+    const storedPaperWidth = localStorage.getItem('coffeepos_paper_width') || localStorage.getItem('barberpos_paper_width');
     if (storedPaperWidth) {
       this.paperWidth = storedPaperWidth;
     }
 
-    const storedDeviceName = localStorage.getItem('barberpos_printer_name');
+    const storedDeviceName = localStorage.getItem('coffeepos_printer_name') || localStorage.getItem('barberpos_printer_name');
     if (storedDeviceName) {
       this.deviceName = storedDeviceName;
     }
 
-    const storedType = localStorage.getItem('barberpos_printer_type');
+    const storedType = localStorage.getItem('coffeepos_printer_type') || localStorage.getItem('barberpos_printer_type');
     if (storedType) {
       this.connectionType = storedType;
     }
@@ -69,10 +69,10 @@ class PrinterService {
 
   saveStorage() {
     if (typeof window === 'undefined') return;
-    localStorage.setItem('barberpos_auto_print', String(this.autoPrintEnabled));
-    localStorage.setItem('barberpos_paper_width', this.paperWidth);
-    localStorage.setItem('barberpos_printer_name', this.deviceName);
-    localStorage.setItem('barberpos_printer_type', this.connectionType || '');
+    localStorage.setItem('coffeepos_auto_print', String(this.autoPrintEnabled));
+    localStorage.setItem('coffeepos_paper_width', this.paperWidth);
+    localStorage.setItem('coffeepos_printer_name', this.deviceName);
+    localStorage.setItem('coffeepos_printer_type', this.connectionType || '');
   }
 
   // Event listener subscription for UI components

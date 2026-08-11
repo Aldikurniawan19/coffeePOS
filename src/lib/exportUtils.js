@@ -28,11 +28,11 @@ const formatDate = (dateStr) => {
  */
 export function exportToExcel({
   transactions = [],
-  barberSummary = [],
+  staffSummary = [],
   totalRevenue = 0,
   totalCommission = 0,
   dateLabel = 'Semua Tanggal',
-  shopName = 'Gentleman Barber'
+  shopName = 'Coffee POS'
 }) {
   let xml = `<?xml version="1.0"?>
 <?mso-application progid="Excel.Sheet"?>
@@ -77,10 +77,10 @@ export function exportToExcel({
     <Cell ss:StyleID="HeaderSales"><Data ss:Type="String">Kode TRX</Data></Cell>
     <Cell ss:StyleID="HeaderSales"><Data ss:Type="String">Waktu</Data></Cell>
     <Cell ss:StyleID="HeaderSales"><Data ss:Type="String">Pelanggan</Data></Cell>
-    <Cell ss:StyleID="HeaderSales"><Data ss:Type="String">Kapster / Barber</Data></Cell>
+    <Cell ss:StyleID="HeaderSales"><Data ss:Type="String">Staff / Barista</Data></Cell>
     <Cell ss:StyleID="HeaderSales"><Data ss:Type="String">Metode Pembayaran</Data></Cell>
     <Cell ss:StyleID="HeaderSales"><Data ss:Type="String">Total Transaksi (Rp)</Data></Cell>
-    <Cell ss:StyleID="HeaderSales"><Data ss:Type="String">Komisi Barber (Rp)</Data></Cell>
+    <Cell ss:StyleID="HeaderSales"><Data ss:Type="String">Komisi Staff (Rp)</Data></Cell>
    </Row>`;
 
   transactions.forEach((tx, idx) => {
@@ -90,39 +90,39 @@ export function exportToExcel({
     <Cell><Data ss:Type="String">${escapeXml(tx.code)}</Data></Cell>
     <Cell><Data ss:Type="String">${escapeXml(formatDate(tx.createdAt))}</Data></Cell>
     <Cell><Data ss:Type="String">${escapeXml(tx.customerName || 'Walk-in')}</Data></Cell>
-    <Cell><Data ss:Type="String">${escapeXml(tx.barberName || '-')}</Data></Cell>
+    <Cell><Data ss:Type="String">${escapeXml(tx.staffName || tx.barberName || '-')}</Data></Cell>
     <Cell><Data ss:Type="String">${escapeXml(tx.paymentMethod || 'Tunai')}</Data></Cell>
     <Cell ss:StyleID="Currency"><Data ss:Type="Number">${tx.totalAmount || 0}</Data></Cell>
-    <Cell ss:StyleID="Currency"><Data ss:Type="Number">${tx.barberComm || 0}</Data></Cell>
+    <Cell ss:StyleID="Currency"><Data ss:Type="Number">${tx.staffComm || tx.barberComm || 0}</Data></Cell>
    </Row>`;
   });
 
   xml += `
    <Row>
     <Cell ss:StyleID="Bold"><Data ss:Type="String">TOTAL</Data></Cell>
-    <Cell/><Cell/><Cell/><Cell/><Cell/>
+    <Cell/><Cell/><Cell/><Cell/>
     <Cell ss:StyleID="BoldCurrency"><Data ss:Type="Number">${totalRevenue}</Data></Cell>
     <Cell ss:StyleID="BoldCurrency"><Data ss:Type="Number">${totalCommission}</Data></Cell>
    </Row>
   </Table>
  </Worksheet>
 
- <Worksheet ss:Name="Bagi Hasil Kapster">
+ <Worksheet ss:Name="Bagi Hasil Staff">
   <Table>
-   <Row><Cell ss:StyleID="Title"><Data ss:Type="String">BAGI HASIL KAPSTER - ${escapeXml(shopName)}</Data></Cell></Row>
+   <Row><Cell ss:StyleID="Title"><Data ss:Type="String">BAGI HASIL STAFF / BARISTA - ${escapeXml(shopName)}</Data></Cell></Row>
    <Row><Cell><Data ss:Type="String">Periode: ${escapeXml(dateLabel)}</Data></Cell></Row>
    <Row></Row>
    <Row>
     <Cell ss:StyleID="Header"><Data ss:Type="String">No</Data></Cell>
-    <Cell ss:StyleID="Header"><Data ss:Type="String">Nama Barber</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Nama Staff</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Kode</Data></Cell>
-    <Cell ss:StyleID="Header"><Data ss:Type="String">Skema Cukur</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Skema Jasa</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Skema Produk</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Total Omset (Rp)</Data></Cell>
-    <Cell ss:StyleID="Header"><Data ss:Type="String">Hak Komisi Barber (Rp)</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Hak Komisi Staff (Rp)</Data></Cell>
    </Row>`;
 
-  barberSummary.forEach((b, idx) => {
+  staffSummary.forEach((b, idx) => {
     xml += `
    <Row>
     <Cell><Data ss:Type="Number">${idx + 1}</Data></Cell>
@@ -139,7 +139,7 @@ export function exportToExcel({
    <Row>
     <Cell ss:StyleID="Bold"><Data ss:Type="String">TOTAL</Data></Cell>
     <Cell/><Cell/><Cell/><Cell/>
-    <Cell ss:StyleID="BoldCurrency"><Data ss:Type="Number">${barberSummary.reduce((a, c) => a + (c.totalSales || 0), 0)}</Data></Cell>
+    <Cell ss:StyleID="BoldCurrency"><Data ss:Type="Number">${staffSummary.reduce((a, c) => a + (c.totalSales || 0), 0)}</Data></Cell>
     <Cell ss:StyleID="BoldCurrency"><Data ss:Type="Number">${totalCommission}</Data></Cell>
    </Row>
   </Table>
@@ -164,14 +164,14 @@ export function exportToExcel({
  */
 export function exportToPDF({
   transactions = [],
-  barberSummary = [],
+  staffSummary = [],
   totalRevenue = 0,
   totalCommission = 0,
   dateLabel = 'Semua Tanggal',
   shopInfo = {}
 }) {
-  const shopName = shopInfo.shopName || 'Gentleman Barber';
-  const address = shopInfo.address || 'Jl. Sudirman No. 123, Jakarta';
+  const shopName = shopInfo.shopName || 'Coffee POS';
+  const address = shopInfo.address || 'Jl. Kopi No. 1';
 
   const htmlContent = `<!DOCTYPE html>
 <html>
@@ -222,7 +222,7 @@ export function exportToPDF({
       <div class="value">${formatCurrency(totalRevenue)}</div>
     </div>
     <div class="stat-card">
-      <div class="label">Total Komisi Kapster</div>
+      <div class="label">Total Komisi Staff</div>
       <div class="value commission">${formatCurrency(totalCommission)}</div>
     </div>
     <div class="stat-card">
@@ -231,11 +231,11 @@ export function exportToPDF({
     </div>
   </div>
 
-  <div class="section-title">1. Ringkasan Bagi Hasil Kapster</div>
+  <div class="section-title">1. Ringkasan Bagi Hasil Staff</div>
   <table>
     <thead>
       <tr>
-        <th>Nama Barber</th>
+        <th>Nama Staff</th>
         <th>Kode</th>
         <th>Skema Komisi</th>
         <th class="text-right">Total Omset</th>
@@ -243,18 +243,18 @@ export function exportToPDF({
       </tr>
     </thead>
     <tbody>
-      ${barberSummary.map(b => `
+      ${staffSummary.map(b => `
         <tr>
           <td><strong>${escapeXml(b.name)}</strong></td>
           <td>${escapeXml(b.code)}</td>
-          <td>Cukur ${b.commissionCut}% | Produk ${b.commissionProduct}%</td>
+          <td>Jasa ${b.commissionCut}% | Produk ${b.commissionProduct}%</td>
           <td class="text-right">${formatCurrency(b.totalSales)}</td>
           <td class="text-right" style="color: #dc2626; font-weight: bold;">${formatCurrency(b.totalComm)}</td>
         </tr>
       `).join('')}
       <tr class="total-row">
         <td colspan="3" class="text-right">TOTAL KOMISI</td>
-        <td class="text-right">${formatCurrency(barberSummary.reduce((a, c) => a + (c.totalSales || 0), 0))}</td>
+        <td class="text-right">${formatCurrency(staffSummary.reduce((a, c) => a + (c.totalSales || 0), 0))}</td>
         <td class="text-right" style="color: #dc2626;">${formatCurrency(totalCommission)}</td>
       </tr>
     </tbody>
@@ -267,7 +267,7 @@ export function exportToPDF({
         <th>Kode TRX</th>
         <th>Waktu</th>
         <th>Pelanggan</th>
-        <th>Kapster</th>
+        <th>Staff / Barista</th>
         <th>Metode</th>
         <th class="text-right">Total</th>
       </tr>
@@ -278,7 +278,7 @@ export function exportToPDF({
           <td><code>${escapeXml(tx.code)}</code></td>
           <td>${formatDate(tx.createdAt)}</td>
           <td>${escapeXml(tx.customerName || 'Walk-in')}</td>
-          <td>${escapeXml(tx.barberName || '-')}</td>
+          <td>${escapeXml(tx.staffName || tx.barberName || '-')}</td>
           <td>${escapeXml(tx.paymentMethod || 'Tunai')}</td>
           <td class="text-right"><strong>${formatCurrency(tx.totalAmount)}</strong></td>
         </tr>
@@ -291,7 +291,7 @@ export function exportToPDF({
   </table>
 
   <div class="footer">
-    BarberPOS System &bull; Laporan Keuangan & Bagi Hasil &bull; ${escapeXml(shopName)}
+    CoffeePOS System &bull; Laporan Keuangan & Bagi Hasil &bull; ${escapeXml(shopName)}
   </div>
 
 </body>

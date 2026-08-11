@@ -22,7 +22,7 @@ export default function StaffView() {
 
   const fetchStaff = async () => {
     try {
-      const res = await fetch('/api/barbers');
+      const res = await fetch('/api/staff');
       const data = await res.json();
       setStaffList(Array.isArray(data) ? data : []);
     } catch (e) {
@@ -40,7 +40,7 @@ export default function StaffView() {
     } else {
       setEditingId(null);
       setName('');
-      setCode('BAR-' + Math.floor(100 + Math.random() * 900));
+      setCode('STF-' + Math.floor(100 + Math.random() * 900));
       setRole('Barista');
       setStatus('Active');
     }
@@ -49,7 +49,7 @@ export default function StaffView() {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    const url = editingId ? `/api/barbers/${editingId}` : '/api/barbers';
+    const url = editingId ? `/api/staff/${editingId}` : '/api/staff';
     const method = editingId ? 'PUT' : 'POST';
 
     try {
@@ -83,7 +83,7 @@ export default function StaffView() {
     if (!deleteConfirmItem) return;
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/barbers/${deleteConfirmItem.id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/staff/${deleteConfirmItem.id}`, { method: 'DELETE' });
       setIsDeleting(false);
       if (res.ok) {
         toast.success("Data staff berhasil dihapus.");

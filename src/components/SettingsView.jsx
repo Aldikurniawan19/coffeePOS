@@ -145,7 +145,7 @@ export default function SettingsView() {
 
           <div className="flex items-center gap-2 mb-5">
             <Save className="w-5 h-5 text-accent" />
-            <h3 className="text-base font-semibold text-text">Informasi Barbershop</h3>
+            <h3 className="text-base font-semibold text-text">Informasi Coffee Shop</h3>
           </div>
 
           {isSaved && (
@@ -156,14 +156,14 @@ export default function SettingsView() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="text-sm font-medium text-text block mb-1">Nama Barbershop</label>
+              <label className="text-sm font-medium text-text block mb-1">Nama Coffee Shop</label>
               <input 
                 type="text" 
                 value={shopName}
                 onChange={(e) => setShopName(e.target.value)}
                 disabled={savingSettings}
                 className="w-full px-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:border-accent disabled:opacity-60"
-                placeholder="Gentleman Barber"
+                placeholder="Coffee POS"
               />
             </div>
             <div>

@@ -257,7 +257,7 @@ export default function DashboardView({ onNavigatePOS, onNavigateReports, onNavi
                     </td>
                     <td className="p-3">
                       <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-md font-medium">
-                        {tx.staffName || tx.barberName || '-'}
+                        {tx.staffName || '-'}
                       </span>
                     </td>
                     <td className="p-3 text-secondary text-xs">
