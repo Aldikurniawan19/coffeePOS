@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LoginPage from '../components/LoginPage.jsx';
+
+// If user already logged in, redirect to main app
+const cookieHeader = Astro.request.headers.get('cookie') || '';
+const cookies = Object.fromEntries(
+  cookieHeader.split(';').map((c) => {
+    const [key, ...val] = c.trim().split('=');
+    return [key, val.join('=')];
+  })
+);
+
+const sessionToken = cookies['session'];
+if (sessionToken) {
+  try {
+    const sessionData = JSON.parse(
+      Buffer.from(sessionToken, 'base64').toString('utf-8')
+    );
+    if (sessionData.userId && sessionData.role) {
+      return Astro.redirect('/');
+    }
+  } catch (e) {
+    // Invalid session, show login
+  }
+}
+---
+
+<Layout title="Login — CoffeePOS">
+  <LoginPage client:only="react" />
+</Layout>

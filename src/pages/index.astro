@@ -1,0 +1,43 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppShell from '../components/AppShell.jsx';
+
+// Read session cookie
+const cookieHeader = Astro.request.headers.get('cookie') || '';
+const cookies = Object.fromEntries(
+  cookieHeader.split(';').map((c) => {
+    const [key, ...val] = c.trim().split('=');
+    return [key, val.join('=')];
+  })
+);
+
+const sessionToken = cookies['session'];
+let user = null;
+
+if (sessionToken) {
+  try {
+    const sessionData = JSON.parse(
+      Buffer.from(sessionToken, 'base64').toString('utf-8')
+    );
+    if (sessionData.userId && sessionData.role) {
+      user = {
+        id: sessionData.userId,
+        username: sessionData.username,
+        name: sessionData.name,
+        role: sessionData.role,
+      };
+    }
+  } catch (e) {
+    // Invalid session
+  }
+}
+
+// Redirect to login if not authenticated
+if (!user) {
+  return Astro.redirect('/login');
+}
+---
+
+<Layout title="CoffeePOS - Modern Coffee Shop System">
+  <AppShell client:only="react" user={user} />
+</Layout>
